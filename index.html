@@ -1,469 +1,1301 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vertex Prevention | Auditoria de preços e prevenção de perdas</title>
-<meta name="description" content="Auditoria de preços, sincronização de PDV e acurácia de inventário para supermercados e varejo de alto giro.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#030712;
-  --ink:#FFFFFF;
-  --muted:#94A3B8;
-  --cyan:#60A5FA;
-  --blue:#3B82F6;
-  --rule:#1A2436;
-  --display:"Space Grotesk",system-ui,sans-serif;
-  --text:"Inter",system-ui,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--muted);font:400 17px/1.7 var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-svg{display:block}
-:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-.wrap{width:min(1120px,calc(100% - 56px));margin-inline:auto}
-p{max-width:58ch}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vertex Prevention | Auditoria de preços e prevenção de perdas</title>
+  <meta name="description"
+    content="Auditoria de preços, sincronização de PDV e acurácia de inventário para supermercados e varejo de alto giro.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712;
+      --ink: #FFFFFF;
+      --muted: #94A3B8;
+      --cyan: #256ee3;
+      --blue: #5525e3;
+      --rule: #1A2436;
+      --display: "Space Grotesk", system-ui, sans-serif;
+      --text: "Inter", system-ui, sans-serif;
+    }
 
-/* cabeçalho */
-header{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--rule)}
-.bar{display:flex;align-items:center;justify-content:space-between;height:70px}
-.brand{display:flex;align-items:center;gap:12px;color:var(--ink)}
-.brand b{font:700 17px/1 var(--display);letter-spacing:.1em}
-.brand i{font-style:normal;display:block;font:500 9px/1 var(--text);letter-spacing:.42em;color:var(--muted);margin-top:6px}
-nav{display:flex;gap:30px;align-items:center;font-size:15px}
-nav a{color:var(--muted);transition:color .2s}
-nav a:hover{color:var(--ink)}
-.btn{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 24px;border-radius:14px;font:500 15px var(--text);letter-spacing:.01em;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease,background .35s ease,border-color .35s ease}
-.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.32) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s cubic-bezier(.22,1,.36,1)}
-.btn:hover::before{transform:translateX(120%)}
-.btn:hover{transform:translateY(-2px)}
-.btn:active{transform:scale(.97)}
-.btn-solid{background:linear-gradient(135deg,#1E3A8A 0%,#2563EB 55%,#3B82F6 100%);color:#FFFFFF;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 24px -12px rgba(37,99,235,.6)}
-.btn-solid:hover{background:linear-gradient(135deg,#2563EB 0%,#3B82F6 55%,#60A5FA 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 14px 34px -12px rgba(59,130,246,.85)}
-.btn-line{border:1px solid rgba(147,197,253,.22);color:var(--ink);background:rgba(255,255,255,.04);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.btn-line:hover{border-color:rgba(96,165,250,.6);background:rgba(59,130,246,.14);box-shadow:0 12px 30px -14px rgba(59,130,246,.7)}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* hero */
-.hero{padding:120px 0 72px;position:relative;isolation:isolate}
-.hero::before{content:"";position:absolute;left:50%;top:-12%;width:960px;height:760px;transform:translateX(-30%) scale(.8);background:radial-gradient(closest-side,rgba(37,99,235,.30),rgba(30,58,138,.14) 55%,transparent 78%);z-index:-1;opacity:0;pointer-events:none;animation:galaxyIn 2.4s .2s cubic-bezier(.22,1,.36,1) forwards}
-.star{position:absolute;border-radius:50%;background:#BFDBFE;opacity:0;z-index:-1;pointer-events:none;animation:starIn .9s ease var(--d,0s) both}
-@keyframes galaxyIn{to{opacity:1;transform:translateX(-30%) scale(1)}}
-@keyframes starIn{to{opacity:.85}}
-@keyframes drop{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
-header{animation:drop .9s cubic-bezier(.22,1,.36,1) both}
-h1{font:700 clamp(46px,7vw,96px)/0.96 var(--display);letter-spacing:-.035em;color:var(--ink);max-width:14ch}
-.lede{margin-top:36px;font-size:20px;max-width:46ch}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:44px}
+    html {
+      scroll-behavior: smooth
+    }
 
-/* código de barras: assinatura visual, com um item fora do preço */
-.scan{margin-top:88px;position:relative}
-.scan svg{width:100%;height:150px}
-.scan .ln{fill:var(--ink)}
-.scan .ln.hot{fill:var(--cyan)}
-.scan .beam{stroke:var(--cyan);stroke-width:2;opacity:0;animation:sweep 2.4s cubic-bezier(.6,0,.2,1) .3s forwards}
-.scan .flag{display:flex;justify-content:space-between;font-size:13px;margin-top:14px;color:var(--muted)}
-.scan .flag b{color:var(--cyan);font-weight:600}
-@keyframes sweep{0%{opacity:1;transform:translateX(0)}90%{opacity:1}100%{opacity:0;transform:translateX(100%)}}
-.scan .beam{transform-box:fill-box}
-@media (prefers-reduced-motion:reduce){.scan .beam{animation:none;opacity:0}}
+    body {
+      background: var(--bg);
+      color: var(--muted);
+      font: 400 17px/1.7 var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden
+    }
 
-/* blocos */
-section{padding:112px 0;border-top:1px solid var(--rule)}
-.label{font:500 15px var(--text);color:var(--cyan);margin-bottom:20px}
-h2{font:700 clamp(32px,4vw,52px)/1.06 var(--display);letter-spacing:-.025em;color:var(--ink);max-width:20ch}
+    a {
+      color: inherit;
+      text-decoration: none
+    }
 
-/* perdas: três frases grandes, sem cartões */
-.leaks{margin-top:64px;display:grid;gap:0}
-.leak{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0;border-top:1px solid var(--rule)}
-.leak:last-child{border-bottom:1px solid var(--rule)}
-.leak h3{font:500 clamp(22px,2.4vw,30px)/1.2 var(--display);color:var(--ink);letter-spacing:-.01em}
+    svg {
+      display: block
+    }
 
-/* serviços em tabela */
-.svc{margin-top:64px;border-top:1px solid var(--rule)}
-.svc-row{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;padding:30px 0;border-bottom:1px solid var(--rule);align-items:baseline}
-.svc-row h3{font:500 24px/1.2 var(--display);color:var(--ink)}
-.svc-row p{font-size:16px}
+    :focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 3px
+    }
 
-/* método: pontos numa linha */
-.line{margin-top:72px;position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.line::before{content:"";position:absolute;left:6px;right:0;top:6px;height:1px;background:linear-gradient(90deg,var(--cyan),var(--blue))}
-.line div{position:relative;padding-top:44px}
-.line div::before{content:"";position:absolute;left:0;top:0;width:13px;height:13px;border-radius:50%;background:var(--bg);border:1px solid var(--cyan)}
-.line h3{font:500 21px var(--display);color:var(--ink);margin-bottom:10px}
-.line p{font-size:15px}
+    .wrap {
+      width: min(1120px, calc(100% - 56px));
+      margin-inline: auto
+    }
 
-/* cupom */
-.calc{margin-top:64px;display:grid;grid-template-columns:1fr 380px;gap:88px;align-items:start}
-.controls{display:grid;gap:36px}
-label{display:grid;gap:12px;font-size:15px;color:var(--muted)}
-input[type=number]{width:100%;height:54px;padding:0 16px;background:transparent;border:1px solid #2A3650;border-radius:4px;color:var(--ink);font:500 18px var(--text)}
-input[type=number]:focus{outline:none;border-color:var(--cyan)}
-input[type=range]{accent-color:var(--cyan);width:100%}
-.receipt{background:rgba(15,23,42,.42);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(96,165,250,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);color:var(--muted);padding:32px 28px;border-radius:18px;font-size:15px;position:relative}
-.receipt::after{display:none}
-.receipt h4{font:700 16px var(--display);color:var(--ink);letter-spacing:.08em;text-align:center;margin-bottom:24px}
-.receipt .r{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #2A3650;font-variant-numeric:tabular-nums}
-.receipt .r:last-of-type{border-bottom:0}
-.receipt .total{margin-top:14px;padding-top:18px;border-top:1px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline;color:var(--ink)}
-.receipt .total b{font:700 34px/1 var(--display);color:var(--cyan);font-variant-numeric:tabular-nums}
-.receipt .note{margin-top:18px;font-size:13px;text-align:center}
-.js .receipt > *{opacity:0}
-.js .receipt.in > *{animation:printLine .5s cubic-bezier(.22,1,.36,1) both}
-.js .receipt.in > :nth-child(1){animation-delay:0s}
-.js .receipt.in > :nth-child(2){animation-delay:.12s}
-.js .receipt.in > :nth-child(3){animation-delay:.24s}
-.js .receipt.in > :nth-child(4){animation-delay:.36s}
-.js .receipt.in > :nth-child(5){animation-delay:.5s}
-.js .receipt.in > :nth-child(6){animation-delay:.64s}
-.js .line div::before{opacity:0}
-.js .line.in div::before{animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
-.js .line.in div:nth-child(2)::before{animation-delay:.25s}
-.js .line.in div:nth-child(3)::before{animation-delay:.45s}
-.js .line.in div:nth-child(4)::before{animation-delay:.65s}
+    p {
+      max-width: 58ch
+    }
 
-/* contato */
-.contact{display:grid;grid-template-columns:1fr 1fr;gap:88px;align-items:start}
-form{display:grid;gap:20px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-input[type=text],textarea{width:100%;padding:14px 0;background:transparent;border:0;border-bottom:1px solid #2A3650;color:var(--ink);font:400 18px var(--text);border-radius:0}
-input[type=text]:focus,textarea:focus{outline:none;border-bottom-color:var(--cyan)}
-textarea{min-height:100px;resize:vertical}
-.status{min-height:24px;font-size:15px;color:var(--ink)}
+    /* cabeçalho */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule)
+    }
 
-footer{padding:56px 0 48px;border-top:1px solid var(--rule);font-size:14px}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
-.foot b{color:var(--ink);font:700 15px var(--display);letter-spacing:.1em}
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px
+    }
 
-/* animações: entrada do hero, revelação das perdas, linha do método, hover nos serviços */
-@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@keyframes slideIn{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
-@keyframes drawRule{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.hero h1 .w{display:inline-block;opacity:0;transform:translateY(55%);animation:wordUp .8s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--i) * 80ms + 150ms)}
-@keyframes wordUp{to{opacity:1;transform:none}}
-@keyframes printLine{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-@keyframes pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
-.hero .lede{animation:rise .9s .15s cubic-bezier(.2,.7,.2,1) both}
-.hero .actions{animation:rise .9s .3s cubic-bezier(.2,.7,.2,1) both}
-.scan .ln{transform-box:fill-box;transform-origin:left center;animation:grow .55s cubic-bezier(.22,1,.36,1) both}
-.js .leak{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
-.js .leak.in{opacity:1;transform:none}
-.js .leak:nth-child(2){transition-delay:.1s}
-.js .leak:nth-child(3){transition-delay:.2s}
-.js .line::before{transform:scaleX(0);transform-origin:left center;transition:transform 1.4s cubic-bezier(.6,0,.2,1)}
-.js .line.in::before{transform:scaleX(1)}
-.svc-row{transition:padding-left .35s ease,background .35s ease;border-radius:12px}
-.js h2,.js .label,.js .controls,.js footer{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
-.js h2.in,.js .label.in,.js .controls.in,.js footer.in{opacity:1;transform:none}
-.js #lead > *{opacity:0}
-.js #lead.in > *{animation:rise .7s cubic-bezier(.22,1,.36,1) both}
-.js #lead.in > :nth-child(1){animation-delay:.05s}
-.js #lead.in > :nth-child(2){animation-delay:.15s}
-.js #lead.in > :nth-child(3){animation-delay:.25s}
-.js #lead.in > :nth-child(4){animation-delay:.35s}
-.js #lead.in > :nth-child(5){animation-delay:.45s}
-.svc-row h3{transition:color .25s ease}
-      .svc-row:hover{padding-left:12px;background:rgba(59,130,246,.07);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.js .svc-row{opacity:0;position:relative}
-.js .svc-row.in{animation:slideIn .6s cubic-bezier(.22,1,.36,1) both;animation-delay:var(--d,0ms)}
-.js .svc-row::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--cyan);transform:scaleX(0);transform-origin:left}
-.js .svc-row.in::after{animation:drawRule .9s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(var(--d,0ms) + 200ms)}
-.svc-row:hover h3{color:var(--cyan)}
-@media (prefers-reduced-motion:reduce){.hero h1 .w,.hero .lede,.hero .actions,.scan .ln{animation:none;opacity:1;transform:none}.btn,.btn::before{transition:none}.btn:hover,.btn:hover::before{transform:none}header,.hero::before{animation:none;opacity:1}.hero::before{transform:translateX(-30%) scale(1)}.js .leak,.js .line::before{opacity:1;transform:none;transition:none}}
-@media (max-width:900px){
-  nav a:not(.btn){display:none}
-  .leak,.svc-row,.calc,.contact{grid-template-columns:1fr;gap:28px}
-  .line{grid-template-columns:1fr 1fr;row-gap:48px}
-  .line::before{display:none}
-  .row{grid-template-columns:1fr}
-  .hero{padding-top:72px}
-  .scan{margin-top:56px}
-}
-@media (max-width:540px){
-  .line{grid-template-columns:1fr}
-  .wrap{width:calc(100% - 36px)}
-}
-</style>
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink)
+    }
+
+    .brand b {
+      font: 700 17px/1 var(--display);
+      letter-spacing: .1em
+    }
+
+    .brand i {
+      font-style: normal;
+      display: block;
+      font: 500 9px/1 var(--text);
+      letter-spacing: .42em;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      font-size: 15px
+    }
+
+    nav a {
+      color: var(--muted);
+      transition: color .2s
+    }
+
+    nav a:hover {
+      color: var(--ink)
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+      padding: 0 24px;
+      border-radius: 14px;
+      font: 500 15px var(--text);
+      letter-spacing: .01em;
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s ease, background .35s ease, border-color .35s ease
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .32) 50%, transparent 70%);
+      transform: translateX(-120%);
+      transition: transform .8s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    .btn:hover::before {
+      transform: translateX(120%)
+    }
+
+    .btn:hover {
+      transform: translateY(-2px)
+    }
+
+    .btn:active {
+      transform: scale(.97)
+    }
+
+    .btn-solid {
+      background: linear-gradient(135deg, #1E3A8A 0%, #5525e3 55%, #3B82F6 100%);
+      color: #FFFFFF;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 8px 24px -12px rgba(37, 99, 235, .6)
+    }
+
+    .btn-solid:hover {
+      background: linear-gradient(135deg, #2563EB 0%, #3B82F6 55%, #60A5FA 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 14px 34px -12px rgba(59, 130, 246, .85)
+    }
+
+    .btn-line {
+      border: 1px solid rgba(147, 197, 253, .22);
+      color: var(--ink);
+      background: rgba(255, 255, 255, .04);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px)
+    }
+
+    .btn-line:hover {
+      border-color: rgba(96, 165, 250, .6);
+      background: rgba(59, 130, 246, .14);
+      box-shadow: 0 12px 30px -14px rgba(59, 130, 246, .7)
+    }
+
+    /* hero */
+    .hero {
+      padding: 120px 0 72px;
+      position: relative;
+      isolation: isolate
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -12%;
+      width: 960px;
+      height: 760px;
+      transform: translateX(-30%) scale(.8);
+      background: radial-gradient(closest-side, rgba(37, 99, 235, .30), rgba(30, 58, 138, .14) 55%, transparent 78%);
+      z-index: -1;
+      opacity: 0;
+      pointer-events: none;
+      animation: galaxyIn 2.4s .2s cubic-bezier(.22, 1, .36, 1) forwards
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #BFDBFE;
+      opacity: 0;
+      z-index: -1;
+      pointer-events: none;
+      animation: starIn .9s ease var(--d, 0s) both
+    }
+
+    @keyframes galaxyIn {
+      to {
+        opacity: 1;
+        transform: translateX(-30%) scale(1)
+      }
+    }
+
+    @keyframes starIn {
+      to {
+        opacity: .85
+      }
+    }
+
+    @keyframes drop {
+      from {
+        opacity: 0;
+        transform: translateY(-100%)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    header {
+      animation: drop .9s cubic-bezier(.22, 1, .36, 1) both
+    }
+
+    h1 {
+      font: 700 clamp(46px, 7vw, 96px)/0.96 var(--display);
+      letter-spacing: -.035em;
+      color: var(--ink);
+      max-width: 14ch
+    }
+
+    .lede {
+      margin-top: 36px;
+      font-size: 20px;
+      max-width: 46ch
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 44px
+    }
+
+    /* código de barras: assinatura visual, com um item fora do preço */
+    .scan {
+      margin-top: 88px;
+      position: relative
+    }
+
+    .scan svg {
+      width: 100%;
+      height: 150px
+    }
+
+    .scan .ln {
+      fill: var(--ink)
+    }
+
+    .scan .ln.hot {
+      fill: var(--cyan)
+    }
+
+    .scan .beam {
+      stroke: var(--cyan);
+      stroke-width: 2;
+      opacity: 0;
+      animation: sweep 2.4s cubic-bezier(.6, 0, .2, 1) .3s forwards
+    }
+
+    .scan .flag {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-top: 14px;
+      color: var(--muted)
+    }
+
+    .scan .flag b {
+      color: var(--cyan);
+      font-weight: 600
+    }
+
+    @keyframes sweep {
+      0% {
+        opacity: 1;
+        transform: translateX(0)
+      }
+
+      90% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(100%)
+      }
+    }
+
+    .scan .beam {
+      transform-box: fill-box
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      .scan .beam {
+        animation: none;
+        opacity: 0
+      }
+    }
+
+    /* blocos */
+    section {
+      padding: 112px 0;
+      border-top: 1px solid var(--rule)
+    }
+
+    .label {
+      font: 500 15px var(--text);
+      color: var(--cyan);
+      margin-bottom: 20px
+    }
+
+    h2 {
+      font: 700 clamp(32px, 4vw, 52px)/1.06 var(--display);
+      letter-spacing: -.025em;
+      color: var(--ink);
+      max-width: 20ch
+    }
+
+    /* perdas: três frases grandes, sem cartões */
+    .leaks {
+      margin-top: 64px;
+      display: grid;
+      gap: 0
+    }
+
+    .leak {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      padding: 34px 0;
+      border-top: 1px solid var(--rule)
+    }
+
+    .leak:last-child {
+      border-bottom: 1px solid var(--rule)
+    }
+
+    .leak h3 {
+      font: 500 clamp(22px, 2.4vw, 30px)/1.2 var(--display);
+      color: var(--ink);
+      letter-spacing: -.01em
+    }
+
+    /* serviços em tabela */
+    .svc {
+      margin-top: 64px;
+      border-top: 1px solid var(--rule)
+    }
+
+    .svc-row {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 48px;
+      padding: 30px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: baseline
+    }
+
+    .svc-row h3 {
+      font: 500 24px/1.2 var(--display);
+      color: var(--ink)
+    }
+
+    .svc-row p {
+      font-size: 16px
+    }
+
+    /* método: pontos numa linha */
+    .line {
+      margin-top: 72px;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px
+    }
+
+    .line::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      right: 0;
+      top: 6px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue))
+    }
+
+    .line div {
+      position: relative;
+      padding-top: 44px
+    }
+
+    .line div::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--cyan)
+    }
+
+    .line h3 {
+      font: 500 21px var(--display);
+      color: var(--ink);
+      margin-bottom: 10px
+    }
+
+    .line p {
+      font-size: 15px
+    }
+
+    /* cupom */
+    .calc {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 88px;
+      align-items: start
+    }
+
+    .controls {
+      display: grid;
+      gap: 36px
+    }
+
+    label {
+      display: grid;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--muted)
+    }
+
+    input[type=number] {
+      width: 100%;
+      height: 54px;
+      padding: 0 16px;
+      background: transparent;
+      border: 1px solid #2A3650;
+      border-radius: 4px;
+      color: var(--ink);
+      font: 500 18px var(--text)
+    }
+
+    input[type=number]:focus {
+      outline: none;
+      border-color: var(--cyan)
+    }
+
+    input[type=range] {
+      accent-color: var(--cyan);
+      width: 100%
+    }
+
+    .receipt {
+      background: rgba(15, 23, 42, .42);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(96, 165, 250, .22);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+      color: var(--muted);
+      padding: 32px 28px;
+      border-radius: 18px;
+      font-size: 15px;
+      position: relative
+    }
+
+    .receipt::after {
+      display: none
+    }
+
+    .receipt h4 {
+      font: 700 16px var(--display);
+      color: var(--ink);
+      letter-spacing: .08em;
+      text-align: center;
+      margin-bottom: 24px
+    }
+
+    .receipt .r {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed #2A3650;
+      font-variant-numeric: tabular-nums
+    }
+
+    .receipt .r:last-of-type {
+      border-bottom: 0
+    }
+
+    .receipt .total {
+      margin-top: 14px;
+      padding-top: 18px;
+      border-top: 1px solid var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      color: var(--ink)
+    }
+
+    .receipt .total b {
+      font: 700 34px/1 var(--display);
+      color: var(--cyan);
+      font-variant-numeric: tabular-nums
+    }
+
+    .receipt .note {
+      margin-top: 18px;
+      font-size: 13px;
+      text-align: center
+    }
+
+    .js .receipt>* {
+      opacity: 0
+    }
+
+    .js .receipt.in>* {
+      animation: printLine .5s cubic-bezier(.22, 1, .36, 1) both
+    }
+
+    .js .receipt.in> :nth-child(1) {
+      animation-delay: 0s
+    }
+
+    .js .receipt.in> :nth-child(2) {
+      animation-delay: .12s
+    }
+
+    .js .receipt.in> :nth-child(3) {
+      animation-delay: .24s
+    }
+
+    .js .receipt.in> :nth-child(4) {
+      animation-delay: .36s
+    }
+
+    .js .receipt.in> :nth-child(5) {
+      animation-delay: .5s
+    }
+
+    .js .receipt.in> :nth-child(6) {
+      animation-delay: .64s
+    }
+
+    .js .line div::before {
+      opacity: 0
+    }
+
+    .js .line.in div::before {
+      animation: pop .5s cubic-bezier(.34, 1.56, .64, 1) both
+    }
+
+    .js .line.in div:nth-child(2)::before {
+      animation-delay: .25s
+    }
+
+    .js .line.in div:nth-child(3)::before {
+      animation-delay: .45s
+    }
+
+    .js .line.in div:nth-child(4)::before {
+      animation-delay: .65s
+    }
+
+    /* contato */
+    .contact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 88px;
+      align-items: start
+    }
+
+    form {
+      display: grid;
+      gap: 20px
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px
+    }
+
+    input[type=text],
+    textarea {
+      width: 100%;
+      padding: 14px 0;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid #2A3650;
+      color: var(--ink);
+      font: 400 18px var(--text);
+      border-radius: 0
+    }
+
+    input[type=text]:focus,
+    textarea:focus {
+      outline: none;
+      border-bottom-color: var(--cyan)
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical
+    }
+
+    .status {
+      min-height: 24px;
+      font-size: 15px;
+      color: var(--ink)
+    }
+
+    footer {
+      padding: 56px 0 48px;
+      border-top: 1px solid var(--rule);
+      font-size: 14px
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .foot b {
+      color: var(--ink);
+      font: 700 15px var(--display);
+      letter-spacing: .1em
+    }
+
+    /* animações: entrada do hero, revelação das perdas, linha do método, hover nos serviços */
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes grow {
+      from {
+        transform: scaleX(0)
+      }
+
+      to {
+        transform: scaleX(1)
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes drawRule {
+      from {
+        transform: scaleX(0)
+      }
+
+      to {
+        transform: scaleX(1)
+      }
+    }
+
+    .hero h1 .w {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(55%);
+      animation: wordUp .8s cubic-bezier(.22, 1, .36, 1) forwards;
+      animation-delay: calc(var(--i) * 80ms + 150ms)
+    }
+
+    @keyframes wordUp {
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes printLine {
+      from {
+        opacity: 0;
+        transform: translateY(-8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(0)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    .hero .lede {
+      animation: rise .9s .15s cubic-bezier(.2, .7, .2, 1) both
+    }
+
+    .hero .actions {
+      animation: rise .9s .3s cubic-bezier(.2, .7, .2, 1) both
+    }
+
+    .scan .ln {
+      transform-box: fill-box;
+      transform-origin: left center;
+      animation: grow .55s cubic-bezier(.22, 1, .36, 1) both
+    }
+
+    .js .leak {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .7s ease, transform .7s ease
+    }
+
+    .js .leak.in {
+      opacity: 1;
+      transform: none
+    }
+
+    .js .leak:nth-child(2) {
+      transition-delay: .1s
+    }
+
+    .js .leak:nth-child(3) {
+      transition-delay: .2s
+    }
+
+    .js .line::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 1.4s cubic-bezier(.6, 0, .2, 1)
+    }
+
+    .js .line.in::before {
+      transform: scaleX(1)
+    }
+
+    .svc-row {
+      transition: padding-left .35s ease, background .35s ease;
+      border-radius: 12px
+    }
+
+    .js h2,
+    .js .label,
+    .js .controls,
+    .js footer {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .8s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    .js h2.in,
+    .js .label.in,
+    .js .controls.in,
+    .js footer.in {
+      opacity: 1;
+      transform: none
+    }
+
+    .js #lead>* {
+      opacity: 0
+    }
+
+    .js #lead.in>* {
+      animation: rise .7s cubic-bezier(.22, 1, .36, 1) both
+    }
+
+    .js #lead.in> :nth-child(1) {
+      animation-delay: .05s
+    }
+
+    .js #lead.in> :nth-child(2) {
+      animation-delay: .15s
+    }
+
+    .js #lead.in> :nth-child(3) {
+      animation-delay: .25s
+    }
+
+    .js #lead.in> :nth-child(4) {
+      animation-delay: .35s
+    }
+
+    .js #lead.in> :nth-child(5) {
+      animation-delay: .45s
+    }
+
+    .svc-row h3 {
+      transition: color .25s ease
+    }
+
+    .svc-row:hover {
+      padding-left: 12px;
+      background: rgba(59, 130, 246, .07);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px)
+    }
+
+    .js .svc-row {
+      opacity: 0;
+      position: relative
+    }
+
+    .js .svc-row.in {
+      animation: slideIn .6s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: var(--d, 0ms)
+    }
+
+    .js .svc-row::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left
+    }
+
+    .js .svc-row.in::after {
+      animation: drawRule .9s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: calc(var(--d, 0ms) + 200ms)
+    }
+
+    .svc-row:hover h3 {
+      color: var(--cyan)
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      .hero h1 .w,
+      .hero .lede,
+      .hero .actions,
+      .scan .ln {
+        animation: none;
+        opacity: 1;
+        transform: none
+      }
+
+      .btn,
+      .btn::before {
+        transition: none
+      }
+
+      .btn:hover,
+      .btn:hover::before {
+        transform: none
+      }
+
+      header,
+      .hero::before {
+        animation: none;
+        opacity: 1
+      }
+
+      .hero::before {
+        transform: translateX(-30%) scale(1)
+      }
+
+      .js .leak,
+      .js .line::before {
+        opacity: 1;
+        transform: none;
+        transition: none
+      }
+    }
+
+    @media (max-width:900px) {
+      nav a:not(.btn) {
+        display: none
+      }
+
+      .leak,
+      .svc-row,
+      .calc,
+      .contact {
+        grid-template-columns: 1fr;
+        gap: 28px
+      }
+
+      .line {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 48px
+      }
+
+      .line::before {
+        display: none
+      }
+
+      .row {
+        grid-template-columns: 1fr
+      }
+
+      .hero {
+        padding-top: 72px
+      }
+
+      .scan {
+        margin-top: 56px
+      }
+    }
+
+    @media (max-width:540px) {
+      .line {
+        grid-template-columns: 1fr
+      }
+
+      .wrap {
+        width: calc(100% - 36px)
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<header>
-  <div class="wrap bar">
-    <a class="brand" href="#top" aria-label="Vertex Prevention, início">
-      <svg width="30" height="30" viewBox="-4 -6 108 112" aria-hidden="true">
-        <g stroke="#3B82F6" stroke-width="2.4" fill="none">
-          <line x1="0" y1="0" x2="30" y2="8"/><line x1="0" y1="0" x2="28" y2="28"/><line x1="0" y1="0" x2="19" y2="37"/>
-          <line x1="30" y1="8" x2="28" y2="28"/><line x1="30" y1="8" x2="19" y2="37"/><line x1="30" y1="8" x2="50" y2="47"/>
-          <line x1="28" y1="28" x2="50" y2="47"/><line x1="19" y1="37" x2="50" y2="47"/><line x1="19" y1="37" x2="50" y2="100"/>
-          <line x1="28" y1="28" x2="50" y2="100"/><line x1="50" y1="47" x2="50" y2="100"/>
-          <line x1="100" y1="0" x2="70" y2="8"/><line x1="100" y1="0" x2="72" y2="28"/><line x1="100" y1="0" x2="81" y2="37"/>
-          <line x1="70" y1="8" x2="72" y2="28"/><line x1="70" y1="8" x2="81" y2="37"/><line x1="70" y1="8" x2="50" y2="47"/>
-          <line x1="72" y1="28" x2="50" y2="47"/><line x1="81" y1="37" x2="50" y2="47"/><line x1="81" y1="37" x2="50" y2="100"/>
-          <line x1="72" y1="28" x2="50" y2="100"/>
-        </g>
-        <g fill="#60A5FA">
-          <circle cx="0" cy="0" r="3"/><circle cx="30" cy="8" r="3"/><circle cx="19" cy="37" r="3"/>
-          <circle cx="28" cy="28" r="3"/><circle cx="50" cy="47" r="3"/><circle cx="50" cy="100" r="3"/>
-          <circle cx="100" cy="0" r="3"/><circle cx="70" cy="8" r="3"/><circle cx="81" cy="37" r="3"/>
-          <circle cx="72" cy="28" r="3"/>
-        </g>
-      </svg>
-      <span><b>VERTEX</b><i>PREVENTION</i></span>
-    </a>
-    <nav aria-label="Principal">
-      <a href="#perdas">Onde perde</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#metodo">Método</a>
-      <a class="btn btn-solid" href="#contato">Pedir diagnóstico</a>
-    </nav>
-  </div>
-</header>
+  <header>
+    <div class="wrap bar">
+      <a class="brand" href="#top" aria-label="Vertex Prevention, início">
+        <svg width="30" height="30" viewBox="-4 -6 108 112" aria-hidden="true">
+          <g stroke="#3B82F6" stroke-width="2.4" fill="none">
+            <line x1="0" y1="0" x2="30" y2="8" />
+            <line x1="0" y1="0" x2="28" y2="28" />
+            <line x1="0" y1="0" x2="19" y2="37" />
+            <line x1="30" y1="8" x2="28" y2="28" />
+            <line x1="30" y1="8" x2="19" y2="37" />
+            <line x1="30" y1="8" x2="50" y2="47" />
+            <line x1="28" y1="28" x2="50" y2="47" />
+            <line x1="19" y1="37" x2="50" y2="47" />
+            <line x1="19" y1="37" x2="50" y2="100" />
+            <line x1="28" y1="28" x2="50" y2="100" />
+            <line x1="50" y1="47" x2="50" y2="100" />
+            <line x1="100" y1="0" x2="70" y2="8" />
+            <line x1="100" y1="0" x2="72" y2="28" />
+            <line x1="100" y1="0" x2="81" y2="37" />
+            <line x1="70" y1="8" x2="72" y2="28" />
+            <line x1="70" y1="8" x2="81" y2="37" />
+            <line x1="70" y1="8" x2="50" y2="47" />
+            <line x1="72" y1="28" x2="50" y2="47" />
+            <line x1="81" y1="37" x2="50" y2="47" />
+            <line x1="81" y1="37" x2="50" y2="100" />
+            <line x1="72" y1="28" x2="50" y2="100" />
+          </g>
+          <g fill="#60A5FA">
+            <circle cx="0" cy="0" r="3" />
+            <circle cx="30" cy="8" r="3" />
+            <circle cx="19" cy="37" r="3" />
+            <circle cx="28" cy="28" r="3" />
+            <circle cx="50" cy="47" r="3" />
+            <circle cx="50" cy="100" r="3" />
+            <circle cx="100" cy="0" r="3" />
+            <circle cx="70" cy="8" r="3" />
+            <circle cx="81" cy="37" r="3" />
+            <circle cx="72" cy="28" r="3" />
+          </g>
+        </svg>
+        <span><b>VERTEX</b><i>PREVENTION</i></span>
+      </a>
+      <nav aria-label="Principal">
+        <a href="#perdas">Onde perde</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#metodo">Método</a>
+        <a class="btn btn-solid" href="#contato">Pedir diagnóstico</a>
+      </nav>
+    </div>
+  </header>
 
-<main id="top">
+  <main id="top">
 
-<div class="wrap hero">
-  <h1><span class="w" style="--i:0">Estanque</span> <span class="w" style="--i:1">o</span> <span class="w" style="--i:2">sangramento</span> <span class="w" style="--i:3">invisível</span> <span class="w" style="--i:4">do</span> <span class="w" style="--i:5">seu</span> <span class="w" style="--i:6">caixa.</span></h1>
-  <p class="lede">Auditamos preço e estoque loja por loja e corrigimos a origem da divergência. Para supermercados e varejo de alto giro.</p>
-  <div class="actions">
-    <a class="btn btn-solid" href="#contato">Pedir diagnóstico</a>
-    <a class="btn btn-line" href="#calculo">Estimar a perda</a>
-  </div>
-
-  <div class="scan" aria-hidden="true">
-    <svg viewBox="0 0 1000 150" preserveAspectRatio="none">
-      <!-- barras geradas de forma fixa; a barra em ciano marca o item com preço divergente -->
-      <g id="bars"></g>
-      <rect class="beam" x="0" y="0" width="3" height="150"/>
-    </svg>
-    <div class="flag"><span>Cada barra é um item de gôndola conferido.</span><b>Item fora do preço no caixa</b></div>
-  </div>
-</div>
-
-<section id="perdas">
-  <div class="wrap">
-    <p class="label">Onde a perda acontece</p>
-    <h2>Três falhas somem com o dinheiro sem aparecer no balanço.</h2>
-    <div class="leaks">
-      <div class="leak">
-        <h3>O preço na gôndola não é o preço que o caixa cobra.</h3>
-        <p>A diferença passa despercebida em cada venda. No fim do mês, a conta não fecha e ninguém sabe dizer por quê.</p>
+    <div class="wrap hero">
+      <h1><span class="w" style="--i:0">Estanque</span> <span class="w" style="--i:1">o</span> <span class="w"
+          style="--i:2">sangramento</span> <span class="w" style="--i:3">invisível</span> <span class="w"
+          style="--i:4">do</span> <span class="w" style="--i:5">seu</span> <span class="w" style="--i:6">caixa.</span>
+      </h1>
+      <p class="lede">Auditamos preço e estoque loja por loja e corrigimos a origem da divergência. Para supermercados e
+        varejo de alto giro.</p>
+      <div class="actions">
+        <a class="btn btn-solid" href="#contato">Pedir diagnóstico</a>
+        <a class="btn btn-line" href="#calculo">Estimar a perda</a>
       </div>
-      <div class="leak">
-        <h3>O estoque do sistema tem uma realidade diferente da prateleira.</h3>
-        <p>Produto que o sistema diz que existe e não está lá. Compra repetida, venda perdida e ruptura que parece aleatória.</p>
-      </div>
-      <div class="leak">
-        <h3>O produto que vence primeiro fica no fundo da prateleira.</h3>
-        <p>Sem ordem na retaguarda, o descarte aumenta e o giro cai. A perda é real, mas raramente entra na conta como perda.</p>
+
+      <div class="scan" aria-hidden="true">
+        <svg viewBox="0 0 1000 150" preserveAspectRatio="none">
+          <!-- barras geradas de forma fixa; a barra em ciano marca o item com preço divergente -->
+          <g id="bars"></g>
+          <rect class="beam" x="0" y="0" width="3" height="150" />
+        </svg>
+        <div class="flag"><span>Cada barra é um item de gôndola conferido.</span><b>Item fora do preço no caixa</b>
+        </div>
       </div>
     </div>
-  </div>
-</section>
 
-<section id="servicos">
-  <div class="wrap">
-    <p class="label">Serviços</p>
-    <h2>Quatro frentes, cada uma com um escopo definido.</h2>
-    <div class="svc">
-      <div class="svc-row">
-        <h3>Auditoria de prateleira</h3>
-        <p>Conferência produto por produto na gôndola: preço exibido, etiqueta, posição e validade. Cada desvio sai num relatório com foto e localização.</p>
+    <section id="perdas">
+      <div class="wrap">
+        <p class="label">Onde a perda acontece</p>
+        <h2>Três falhas somem com o dinheiro sem aparecer no balanço.</h2>
+        <div class="leaks">
+          <div class="leak">
+            <h3>O preço na gôndola não é o preço que o caixa cobra.</h3>
+            <p>A diferença passa despercebida em cada venda. No fim do mês, a conta não fecha e ninguém sabe dizer por
+              quê.</p>
+          </div>
+          <div class="leak">
+            <h3>O estoque do sistema tem uma realidade diferente da prateleira.</h3>
+            <p>Produto que o sistema diz que existe e não está lá. Compra repetida, venda perdida e ruptura que parece
+              aleatória.</p>
+          </div>
+          <div class="leak">
+            <h3>O produto que vence primeiro fica no fundo da prateleira.</h3>
+            <p>Sem ordem na retaguarda, o descarte aumenta e o giro cai. A perda é real, mas raramente entra na conta
+              como perda.</p>
+          </div>
+        </div>
       </div>
-      <div class="svc-row">
-        <h3>Sincronização de PDV</h3>
-        <p>Preço e cadastro do caixa alinhados ao sistema de gestão, com conferência após a correção.</p>
+    </section>
+
+    <section id="servicos">
+      <div class="wrap">
+        <p class="label">Serviços</p>
+        <h2>Quatro frentes, cada uma com um escopo definido.</h2>
+        <div class="svc">
+          <div class="svc-row">
+            <h3>Auditoria de prateleira</h3>
+            <p>Conferência produto por produto na gôndola: preço exibido, etiqueta, posição e validade. Cada desvio sai
+              num relatório com foto e localização.</p>
+          </div>
+          <div class="svc-row">
+            <h3>Sincronização de PDV</h3>
+            <p>Preço e cadastro do caixa alinhados ao sistema de gestão, com conferência após a correção.</p>
+          </div>
+          <div class="svc-row">
+            <h3>Ordem de estoque</h3>
+            <p>Reorganização da retaguarda para que o produto que vence primeiro saia primeiro, com regras que a equipe
+              consegue manter.</p>
+          </div>
+          <div class="svc-row">
+            <h3>Acurácia de inventário</h3>
+            <p>Contagens cíclicas por setor, sem fechar a loja, comparadas com o sistema. A divergência fica registrada
+              por categoria e é acompanhada mês a mês.</p>
+          </div>
+        </div>
       </div>
-      <div class="svc-row">
-        <h3>Ordem de estoque</h3>
-        <p>Reorganização da retaguarda para que o produto que vence primeiro saia primeiro, com regras que a equipe consegue manter.</p>
+    </section>
+
+    <section id="metodo">
+      <div class="wrap">
+        <p class="label">Como trabalhamos</p>
+        <h2>Quatro etapas, em ordem.</h2>
+        <div class="line">
+          <div>
+            <h3>Diagnóstico</h3>
+            <p>Mapeamos onde a divergência aparece, da prateleira ao caixa, com os dados que a loja já tem.</p>
+          </div>
+          <div>
+            <h3>Auditoria</h3>
+            <p>Conferência em campo, item a item, com prioridades definidas junto da gerência.</p>
+          </div>
+          <div>
+            <h3>Correção</h3>
+            <p>Sincronização do PDV e ajuste da retaguarda para eliminar a causa, e não só o sintoma.</p>
+          </div>
+          <div>
+            <h3>Acompanhamento</h3>
+            <p>Medição da acurácia e do padrão, até que a rotina da loja o sustente sozinha.</p>
+          </div>
+        </div>
       </div>
-      <div class="svc-row">
-        <h3>Acurácia de inventário</h3>
-        <p>Contagens cíclicas por setor, sem fechar a loja, comparadas com o sistema. A divergência fica registrada por categoria e é acompanhada mês a mês.</p>
+    </section>
+
+    <section id="calculo">
+      <div class="wrap">
+        <p class="label">Estimativa</p>
+        <h2>Quanto a divergência custa por mês?</h2>
+        <div class="calc">
+          <form class="controls" id="calc" aria-label="Estimativa de perda">
+            <label for="fat">Faturamento mensal (R$)
+              <input type="number" id="fat" min="0" step="1000" value="300000" inputmode="numeric">
+            </label>
+            <label for="pct">Divergência de estoque estimada: <span id="pctOut">2,0%</span>
+              <input type="range" id="pct" min="0.5" max="6" step="0.1" value="2">
+            </label>
+          </form>
+          <div class="receipt" aria-live="polite">
+            <h4>PERDA ESTIMADA</h4>
+            <div class="r"><span>Faturamento</span><span id="fatOut">R$ 300.000</span></div>
+            <div class="r"><span>Divergência</span><span id="pctOut2">2,0%</span></div>
+            <div class="r"><span>Por ano</span><span id="yearOut">R$ 72.000</span></div>
+            <div class="total"><span>Por mês</span><b id="monthOut">R$ 6.000</b></div>
+            <p class="note">Estimativa com base nos valores informados.</p>
+          </div>
+        </div>
       </div>
+    </section>
+
+    <section id="contato">
+      <div class="wrap contact">
+        <div>
+          <p class="label">Contato</p>
+          <h2>Vamos achar onde o seu caixa está perdendo.</h2>
+          <p style="margin-top:24px">Conte como funciona a sua operação. Respondemos com uma proposta de diagnóstico.
+          </p>
+        </div>
+        <form id="lead" novalidate>
+          <div class="row">
+            <label for="nome">Nome<input type="text" id="nome" autocomplete="name" required></label>
+            <label for="empresa">Empresa<input type="text" id="empresa" autocomplete="organization" required></label>
+          </div>
+          <label for="contato-campo">E-mail ou WhatsApp<input type="text" id="contato-campo" autocomplete="email"
+              required></label>
+          <label for="msg">Mensagem (opcional)<textarea id="msg"
+              placeholder="Quantas lojas, quais categorias giram mais, onde a divergência aparece."></textarea></label>
+          <div><button class="btn btn-solid" type="submit">Pedir diagnóstico</button></div>
+          <p class="status" id="status" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <b>VERTEX PREVENTION</b>
+      <span>© 2026 Vertex Prevention</span>
     </div>
-  </div>
-</section>
+  </footer>
 
-<section id="metodo">
-  <div class="wrap">
-    <p class="label">Como trabalhamos</p>
-    <h2>Quatro etapas, em ordem.</h2>
-    <div class="line">
-      <div>
-        <h3>Diagnóstico</h3>
-        <p>Mapeamos onde a divergência aparece, da prateleira ao caixa, com os dados que a loja já tem.</p>
-      </div>
-      <div>
-        <h3>Auditoria</h3>
-        <p>Conferência em campo, item a item, com prioridades definidas junto da gerência.</p>
-      </div>
-      <div>
-        <h3>Correção</h3>
-        <p>Sincronização do PDV e ajuste da retaguarda para eliminar a causa, e não só o sintoma.</p>
-      </div>
-      <div>
-        <h3>Acompanhamento</h3>
-        <p>Medição da acurácia e do padrão, até que a rotina da loja o sustente sozinha.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="calculo">
-  <div class="wrap">
-    <p class="label">Estimativa</p>
-    <h2>Quanto a divergência custa por mês?</h2>
-    <div class="calc">
-      <form class="controls" id="calc" aria-label="Estimativa de perda">
-        <label for="fat">Faturamento mensal (R$)
-          <input type="number" id="fat" min="0" step="1000" value="300000" inputmode="numeric">
-        </label>
-        <label for="pct">Divergência de estoque estimada: <span id="pctOut">2,0%</span>
-          <input type="range" id="pct" min="0.5" max="6" step="0.1" value="2">
-        </label>
-      </form>
-      <div class="receipt" aria-live="polite">
-        <h4>PERDA ESTIMADA</h4>
-        <div class="r"><span>Faturamento</span><span id="fatOut">R$ 300.000</span></div>
-        <div class="r"><span>Divergência</span><span id="pctOut2">2,0%</span></div>
-        <div class="r"><span>Por ano</span><span id="yearOut">R$ 72.000</span></div>
-        <div class="total"><span>Por mês</span><b id="monthOut">R$ 6.000</b></div>
-        <p class="note">Estimativa com base nos valores informados.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="contato">
-  <div class="wrap contact">
-    <div>
-      <p class="label">Contato</p>
-      <h2>Vamos achar onde o seu caixa está perdendo.</h2>
-      <p style="margin-top:24px">Conte como funciona a sua operação. Respondemos com uma proposta de diagnóstico.</p>
-    </div>
-    <form id="lead" novalidate>
-      <div class="row">
-        <label for="nome">Nome<input type="text" id="nome" autocomplete="name" required></label>
-        <label for="empresa">Empresa<input type="text" id="empresa" autocomplete="organization" required></label>
-      </div>
-      <label for="contato-campo">E-mail ou WhatsApp<input type="text" id="contato-campo" autocomplete="email" required></label>
-      <label for="msg">Mensagem (opcional)<textarea id="msg" placeholder="Quantas lojas, quais categorias giram mais, onde a divergência aparece."></textarea></label>
-      <div><button class="btn btn-solid" type="submit">Pedir diagnóstico</button></div>
-      <p class="status" id="status" role="status"></p>
-    </form>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="wrap foot">
-    <b>VERTEX PREVENTION</b>
-    <span>© 2026 Vertex Prevention</span>
-  </div>
-</footer>
-
-<script>
-(function(){
-  // barras do código de barras (padrão fixo, sem aleatoriedade)
-  var widths = [3,1,2,1,4,2,1,3,2,1,1,3,2,4,1,2,3,1,2,1,3,2,4,1,1,2,3,1,2,1,4,3,1,2,1,3,2,1,4,2,1,3,1,2];
-  var g = document.getElementById('bars');
-  var x = 20, hot = 27, ns = 'http://www.w3.org/2000/svg';
-  widths.forEach(function(w, i){
-    var r = document.createElementNS(ns, 'rect');
-    r.setAttribute('x', x); r.setAttribute('y', 0);
-    r.setAttribute('width', w * 3); r.setAttribute('height', 150);
-    r.setAttribute('class', i === hot ? 'ln hot' : 'ln');
-    r.style.animationDelay = (i * 22) + 'ms';
-    g.appendChild(r);
-    x += w * 3 + 3;
-  });
-
-  var fmt = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL', maximumFractionDigits:0});
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // estrelas discretas no hero, aparecendo em momentos diferentes
-  var heroEl = document.querySelector('.hero');
-  if (heroEl && !reduce) {
-    for (var s = 0; s < 48; s++) {
-      var st = document.createElement('span');
-      st.className = 'star';
-      var size = Math.random() < .2 ? 3 : 1.5;
-      st.style.width = st.style.height = size + 'px';
-      st.style.left = (Math.random() * 100) + '%';
-      st.style.top = (Math.random() * 100) + '%';
-      st.style.setProperty('--d', (0.4 + Math.random() * 1.8).toFixed(2) + 's');
-      heroEl.appendChild(st);
-    }
-  }
-  // contagem suave do valor ao mexer nos controles
-  function tween(id, to){
-    var el = document.getElementById(id);
-    var from = el._v || 0;
-    el._v = to;
-    if (reduce) { el.textContent = fmt.format(to); return; }
-    var t0 = null;
-    function step(ts){
-      if (!t0) t0 = ts;
-      var k = Math.min(1, (ts - t0) / 450);
-      var e = 1 - Math.pow(1 - k, 3);
-      el.textContent = fmt.format(from + (to - from) * e);
-      if (k < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  var fat = document.getElementById('fat');
-  var pct = document.getElementById('pct');
-  function update(){
-    var f = Math.max(0, parseFloat(fat.value) || 0);
-    var p = parseFloat(pct.value) || 0;
-    var m = f * p / 100;
-    var pTxt = p.toFixed(1).replace('.', ',') + '%';
-    document.getElementById('pctOut').textContent = pTxt;
-    document.getElementById('pctOut2').textContent = pTxt;
-    document.getElementById('fatOut').textContent = fmt.format(f);
-    tween('monthOut', m);
-    tween('yearOut', m * 12);
-  }
-  fat.addEventListener('input', update);
-  pct.addEventListener('input', update);
-  update();
-
-  // revelação ao rolar: só nas frases de perda e na linha do método
-  if ('IntersectionObserver' in window && !reduce) {
-    document.documentElement.classList.add('js');
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  <script>
+    (function () {
+      // barras do código de barras (padrão fixo, sem aleatoriedade)
+      var widths = [3, 1, 2, 1, 4, 2, 1, 3, 2, 1, 1, 3, 2, 4, 1, 2, 3, 1, 2, 1, 3, 2, 4, 1, 1, 2, 3, 1, 2, 1, 4, 3, 1, 2, 1, 3, 2, 1, 4, 2, 1, 3, 1, 2];
+      var g = document.getElementById('bars');
+      var x = 20, hot = 27, ns = 'http://www.w3.org/2000/svg';
+      widths.forEach(function (w, i) {
+        var r = document.createElementNS(ns, 'rect');
+        r.setAttribute('x', x); r.setAttribute('y', 0);
+        r.setAttribute('width', w * 3); r.setAttribute('height', 150);
+        r.setAttribute('class', i === hot ? 'ln hot' : 'ln');
+        r.style.animationDelay = (i * 22) + 'ms';
+        g.appendChild(r);
+        x += w * 3 + 3;
       });
-    }, {threshold: .25});
-    document.querySelectorAll('.leak, .line, .receipt, .controls, h2, .label, #lead, footer').forEach(function(el){ io.observe(el); });
-    document.querySelectorAll('.svc-row').forEach(function(el, i){
-      el.style.setProperty('--d', (i * 70) + 'ms');
-      io.observe(el);
-    });
-  }
 
-  var form = document.getElementById('lead');
-  var status = document.getElementById('status');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var ok = true;
-    form.querySelectorAll('[required]').forEach(function(el){
-      var empty = !el.value.trim();
-      el.setAttribute('aria-invalid', empty ? 'true' : 'false');
-      if (empty) ok = false;
-    });
-    status.textContent = ok
-      ? 'Recebemos sua solicitação. Respondemos em breve.'
-      : 'Preencha nome, empresa e contato para continuar.';
-    if (ok) form.reset();
-  });
-})();
-</script>
+      var fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // estrelas discretas no hero, aparecendo em momentos diferentes
+      var heroEl = document.querySelector('.hero');
+      if (heroEl && !reduce) {
+        for (var s = 0; s < 48; s++) {
+          var st = document.createElement('span');
+          st.className = 'star';
+          var size = Math.random() < .2 ? 3 : 1.5;
+          st.style.width = st.style.height = size + 'px';
+          st.style.left = (Math.random() * 100) + '%';
+          st.style.top = (Math.random() * 100) + '%';
+          st.style.setProperty('--d', (0.4 + Math.random() * 1.8).toFixed(2) + 's');
+          heroEl.appendChild(st);
+        }
+      }
+      // contagem suave do valor ao mexer nos controles
+      function tween(id, to) {
+        var el = document.getElementById(id);
+        var from = el._v || 0;
+        el._v = to;
+        if (reduce) { el.textContent = fmt.format(to); return; }
+        var t0 = null;
+        function step(ts) {
+          if (!t0) t0 = ts;
+          var k = Math.min(1, (ts - t0) / 450);
+          var e = 1 - Math.pow(1 - k, 3);
+          el.textContent = fmt.format(from + (to - from) * e);
+          if (k < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+      var fat = document.getElementById('fat');
+      var pct = document.getElementById('pct');
+      function update() {
+        var f = Math.max(0, parseFloat(fat.value) || 0);
+        var p = parseFloat(pct.value) || 0;
+        var m = f * p / 100;
+        var pTxt = p.toFixed(1).replace('.', ',') + '%';
+        document.getElementById('pctOut').textContent = pTxt;
+        document.getElementById('pctOut2').textContent = pTxt;
+        document.getElementById('fatOut').textContent = fmt.format(f);
+        tween('monthOut', m);
+        tween('yearOut', m * 12);
+      }
+      fat.addEventListener('input', update);
+      pct.addEventListener('input', update);
+      update();
+
+      // revelação ao rolar: só nas frases de perda e na linha do método
+      if ('IntersectionObserver' in window && !reduce) {
+        document.documentElement.classList.add('js');
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+          });
+        }, { threshold: .25 });
+        document.querySelectorAll('.leak, .line, .receipt, .controls, h2, .label, #lead, footer').forEach(function (el) { io.observe(el); });
+        document.querySelectorAll('.svc-row').forEach(function (el, i) {
+          el.style.setProperty('--d', (i * 70) + 'ms');
+          io.observe(el);
+        });
+      }
+
+      var form = document.getElementById('lead');
+      var status = document.getElementById('status');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var ok = true;
+        form.querySelectorAll('[required]').forEach(function (el) {
+          var empty = !el.value.trim();
+          el.setAttribute('aria-invalid', empty ? 'true' : 'false');
+          if (empty) ok = false;
+        });
+
+        if (!ok) {
+          status.textContent = 'Preencha nome, empresa e contato para continuar.';
+          return;
+        }
+
+        var nome = document.getElementById('nome').value;
+        var empresa = document.getElementById('empresa').value;
+        var contato = document.getElementById('contato-campo').value;
+        var msg = document.getElementById('msg').value;
+
+        var texto = "Olá, Vertex Prevention! Gostaria de solicitar um diagnóstico para a minha loja.\n\n" +
+          "*Nome:* " + nome + "\n" +
+          "*Empresa:* " + empresa + "\n" +
+          "*Contato:* " + contato + "\n" +
+          "*Detalhes da Operação:* " + (msg ? msg : "Não informado");
+
+        var numeroWhatsApp = "5511952728502";
+        var url = "https://wa.me/" + numeroWhatsApp + "?text=" + encodeURIComponent(texto);
+
+        window.open(url, '_blank');
+        status.textContent = 'Redirecionando para o WhatsApp...';
+        form.reset();
+      });
+    })();
+  </script>
 </body>
+
 </html>
